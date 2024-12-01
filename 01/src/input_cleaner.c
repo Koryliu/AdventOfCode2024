@@ -8,32 +8,28 @@
 #define ALLOCATION_SEGMENT 200
 
 
-static void sorting_insert(long* target, const size_t head, const long val) {
+static void sorting_insert(long* target, const size_t length, const long val) {
 	size_t insert_to = 0;
-	for (;insert_to < head; insert_to++) {
+	for (;insert_to < length; insert_to++) {
 		if (target[insert_to] > val) {
 			break;
 		}
 	}
 
-	long val_to_move = val;
-	for (size_t i = insert_to; i <= head; i++) {
-		long temp = target[i];
-		target[i] = val_to_move;
-		val_to_move = temp;
+	size_t bytes_moved = (length - insert_to) * sizeof(long);
+	if (bytes_moved > 0) {
+		long* temp_array = malloc(bytes_moved);
+		memcpy(temp_array, target + insert_to, bytes_moved);
+		memcpy(target + insert_to + 1, temp_array, bytes_moved);
+		free(temp_array);
 	}
+	target[insert_to] = val;
 }
 
 
 ArrayTupple get_arrays_from_input() {
-	ArrayTupple result = {
-		malloc(ALLOCATION_SEGMENT * sizeof(long)),
-		malloc(ALLOCATION_SEGMENT * sizeof(long)),
-		0, ALLOCATION_SEGMENT, true
-	};
-	if ((result.l1 == NULL) || (result.l2 == NULL)) {
-		fprintf(stderr, "Error! Memory could not be allocated properly!");
-		destroy_tupple(&result);
+	ArrayTupple result = create_tupple();
+	if (!result.is_allocated) {
 		return result;
 	}
 
@@ -45,38 +41,56 @@ ArrayTupple get_arrays_from_input() {
 	}
 
 	size_t buffer_len = 20;
-	char* read_buffer = malloc(buffer_len * sizeof(char));  // will get allocated during getline!
+	char* read_buffer = malloc(buffer_len * sizeof(char));
 	while (getline(&read_buffer, &buffer_len, input) > 0) {
 		char* split = strpbrk(read_buffer, " \t\v\f");
 		long val1 = strtol(read_buffer, &split, 10);
 		long val2 = strtol(split + 1, NULL, 10);
 
-		if (result.head == result.max_length) {
+		if (result.length >= result.max_length) {
 			result.max_length += ALLOCATION_SEGMENT;
-			result.l1 = realloc(result.l1, result.max_length * sizeof(long));
-			result.l2 = realloc(result.l2, result.max_length * sizeof(long));
-			if ((result.l1 == NULL) || (result.l2 == NULL)) {
+			result.left = realloc(result.left, result.max_length * sizeof(long));
+			result.right = realloc(result.right, result.max_length * sizeof(long));
+			if ((result.left == NULL) || (result.right == NULL)) {
 				fprintf(stderr, "Error! Memory could not be re-allocated properly!");
 				destroy_tupple(&result);
 				break;
 			}
 		}
-		sorting_insert(result.l1, result.head, val1);
-		sorting_insert(result.l2, result.head, val2);
-		result.head++;
+		sorting_insert(result.left, result.length, val1);
+		sorting_insert(result.right, result.length, val2);
+		result.length++;
 	}
+	fclose(input);
 	free(read_buffer);
 	return result;
 }
 
 
-void destroy_tupple(ArrayTupple* target) {
-	free(target->l1);
-	target->l1 = NULL;
-	free(target->l2);
-	target->l2 = NULL;
+ArrayTupple create_tupple() {
+	ArrayTupple result = {
+		.left  = malloc(ALLOCATION_SEGMENT * sizeof(long)),
+		.right = malloc(ALLOCATION_SEGMENT * sizeof(long)),
+		.length = 0,
+		.max_length = ALLOCATION_SEGMENT,
+		.is_allocated = true
+	};
+	if ((result.left == NULL) || (result.right == NULL)) {
+		fprintf(stderr, "Error! Memory could not be allocated properly!");
+		destroy_tupple(&result);
+		return result;
+	}
+	return result;
+}
 
-	target->head = 0;
+
+void destroy_tupple(ArrayTupple* target) {
+	free(target->left);
+	target->left = NULL;
+	free(target->right);
+	target->right = NULL;
+
+	target->length = 0;
 	target->max_length = 0;
-	target->is_constructed = false;
+	target->is_allocated = false;
 }

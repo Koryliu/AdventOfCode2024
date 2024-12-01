@@ -40,26 +40,26 @@ static long* binary_search(
 
 int main() {
 	ArrayTupple locations = get_arrays_from_input();
-	if (!locations.is_constructed) {
+	if (!locations.is_allocated) {
 		return EXIT_FAILURE;
 	}
 
 	unsigned long long total_distance = 0;
 	long long similarity_score = 0;
-	for (size_t i = 0; i < locations.head; i++) {
-		total_distance += llabs((long long) (locations.l1[i] - locations.l2[i]));
+	for (size_t i = 0; i < locations.length; i++) {
+		total_distance += llabs((long long) (locations.left[i] - locations.right[i]));
 
 		long* first_occurence = binary_search(
-			locations.l2, locations.max_length, locations.l1[i], true);
+			locations.right, locations.max_length, locations.left[i], true);
 		if (first_occurence != NULL) {
 			long* last_occurence = binary_search(
-				locations.l2, locations.max_length, locations.l1[i], false);
+				locations.right, locations.max_length, locations.left[i], false);
 			if (last_occurence == NULL) {
 				fprintf(stderr, "Error! Binary search found beginning but not the end!");
 				destroy_tupple(&locations);
 				return EXIT_FAILURE;
 			}
-			similarity_score += locations.l1[i] * (last_occurence - first_occurence + 1);
+			similarity_score += locations.left[i] * (last_occurence - first_occurence + 1);
 		}
 	}
 	printf("Total score: %llu\n", total_distance);
