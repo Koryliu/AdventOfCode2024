@@ -1,0 +1,18 @@
+# ignore all
+*
+
+# unignore specific
+!.gitignore
+!instructions.md
+
+![0-9][0-9]/
+![0-9][0-9]/*/
+![0-9][0-9]/*/src
+![0-9][0-9]/*/bin
+
+# languages used
+!*.py
+!*.c
+!*.h
+!*.cpp
+!*.hpp
