@@ -16,3 +16,7 @@
 !*.h
 !*.cpp
 !*.hpp
+
+# ignore tests (don't want to leak correct output)
+test.*
+
