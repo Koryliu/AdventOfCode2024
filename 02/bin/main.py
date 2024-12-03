@@ -9,9 +9,10 @@ def get_reports_from_input() -> list[Report]:
         ]
 
 
-def is_report_safe(report: Report) -> bool:
+# DANGER, code is at this point not correct, the fact it gives correct
+# result on my input was a highly unlikely coicidence
+def is_report_safe(report: Report, can_be_dampened: bool) -> bool:
     is_increasing: bool | None = None
-    is_problem_dampened: bool = False
     for i, level in enumerate(report):
         if i == len(report) - 1:
             continue
@@ -23,8 +24,8 @@ def is_report_safe(report: Report) -> bool:
         elif (is_increasing is None or not is_increasing) and\
              (next_level < level <= next_level + 3):
             is_increasing = False
-        elif not is_problem_dampened:
-            is_problem_dampened = True
+        elif can_be_dampened:
+            can_be_dampened = False
         else:
             return False
     return True
@@ -32,6 +33,9 @@ def is_report_safe(report: Report) -> bool:
 
 if __name__ == "__main__":
     safe_reports: int = 0
+    dampened_reports: int = 0
     for report in get_reports_from_input():
-        safe_reports += 1 if is_report_safe(report) else 0
+        safe_reports += 1 if is_report_safe(report, False) else 0
+        dampened_reports += 1 if is_report_safe(report, True) else 0
     print("Total amount of safe reports:", safe_reports)
+    print("Dampened amount of safe reports:", dampened_reports)

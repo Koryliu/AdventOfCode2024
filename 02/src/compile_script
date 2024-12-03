@@ -1,0 +1,8 @@
+#!/bin/sh
+OPTIMIZATION_LEVEL=""
+test $# -gt 1 && OPTIMIZATION_LEVEL="-O2"
+if ghc main.hs $OPTIMIZATION_LEVEL; then
+	mv ./main ../bin/AoC_Day02;
+	rm ./main.o;
+	rm ./main.hi;
+fi;
