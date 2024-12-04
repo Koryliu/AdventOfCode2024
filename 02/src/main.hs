@@ -22,13 +22,10 @@ isAscending [] = True
 
 
 isAscendingDampened :: [Int] -> Bool
-isAscendingDampened (x : y : tail) =
-    if isOrdered x y
-        then isAscendingDampened (y : tail)
-    -- problem here
-    else isAscending (x : tail) || isAscending (y : tail)
-isAscendingDampened [_] = True
-isAscendingDampened [] = True
+isAscendingDampened (x : y : z : tail)
+  | isOrdered x y && isOrdered y z = isAscendingDampened (z : tail)
+  | otherwise = isAscending (x : z : tail) || isAscending (y : z : tail)
+isAscendingDampened _ = True
 
 
 isDescending:: [Int] -> Bool
@@ -37,13 +34,10 @@ isDescending [_] = True
 isDescending [] = True
 
 isDescendingDampened:: [Int] -> Bool
-isDescendingDampened (x : y : tail) =
-    if isOrdered y x
-        then isDescendingDampened (y : tail)
-    -- problem here
-    else isDescending (x : tail) || isDescending (y : tail)
-isDescendingDampened [_] = True
-isDescendingDampened [] = True
+isDescendingDampened (x : y : z : tail)
+  | isOrdered y x && isOrdered z y = isDescendingDampened (z : tail)
+  | otherwise = isDescending (x : z : tail) || isDescending (y : z : tail)
+isDescendingDampened _ = True
 
 
 readInt :: [[Char]] -> [Int]
