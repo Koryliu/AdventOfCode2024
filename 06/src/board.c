@@ -130,21 +130,14 @@ void destruct_board(Board* board) {
 void draw_board(Board* board) {
 	for (size_t y = 0; y < board->rows_count; y++) {
 		for (size_t x = 0; x < strlen(board->rows[y]); x++) {
+			char c = board->rows[y][x];
 			if ((x == board->start.x) && (y == board->start.y)) {
 				printf("^");
 				continue;
 			}
 
-			char c = board->rows[y][x];
 			if ((x == board->p.x) && (y == board->p.y)) {
-				if (((c & (NORTH | SOUTH)) != 0b00000000) && ((c & (EAST | WEST)) == 0b00000000)) {
-					printf("I");
-				} else
-				if (((c & (NORTH | SOUTH)) == 0b00000000) && ((c & (EAST | WEST)) != 0b00000000)) {
-					printf("=");
-				} else {
-					printf("*");
-				}
+				printf("o");
 				continue;
 			}
 
