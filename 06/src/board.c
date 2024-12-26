@@ -212,10 +212,6 @@ unsigned int create_path(Board* board) {
 
 
 unsigned int create_path_blockades(Board* board) {
-	if ((board->p.x < 0) || (board->p.y < 0) || (board->rows == NULL)) {
-		return 0;
-	}
-
 	// initial values
 	Position next_p = board->p;
 	add_hpos(&next_p, board->h);
@@ -226,7 +222,7 @@ unsigned int create_path_blockades(Board* board) {
 	}
 
 	while ((get_pos(board, next_p) & (board->h | OUT_OF_BOUNDS)) == 0b00000000) {
-		if (get_pos(board, next_p) != OUT_OF_BOUNDS) {
+		if (get_pos(board, next_p) == EMPTY) {
 			Board permutation = copy_board(board);
 			permutation.rows[next_p.y][next_p.x] = BLOCK;
 			create_path(&permutation);
