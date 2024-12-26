@@ -251,14 +251,6 @@ unsigned int create_path_blockades(Board* board) {
 
 
 int is_path_loop(Board* board) {
-	// Position curr_p = board->start;
-	// Position next_p = curr_p;
-	// Heading heading = NORTH;
-	// add_hpos(&next_p, heading);
-	// if (find_next_heading(board, &curr_p, &next_p, &heading)) {
-	// 	return 1;
-	// }
-
 	Position final_position = board->p;
 	add_hpos(&final_position, board->h);
 	return get_pos(board, final_position) != OUT_OF_BOUNDS;
